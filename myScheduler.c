@@ -2,7 +2,7 @@
  *  @author Zachary Thirkell
  *  @date 8/11/26
  *  @brief a simple scheduling app that runs in the microsoft terminal
- *  @version 1.0.0
+ *  @version 1.2.0
  *  PATH = C:\Users\zacha\dev\myScheduler
 */
 
@@ -10,11 +10,20 @@
 #include <string.h>
 
 #define MAJOR 1
-#define MINOR 1
-#define PATCH 7
+#define MINOR 2
+#define PATCH 0
 
 #define MAX_COMMAND_LENGTH 100
+#define MAX_TOKENS 5
 #define QUIT 113
+
+#define IS_VIEW_COMMAND (command[0] == 'v' && command[1] == 'w')
+#define IS_SCHEDULE_COMMAND (command[0] == 's' && command[1] == 'c' && command[2] == 'h' && command[3] == ' ')
+#define IS_RESCHEDULE_COMMAND (command[0] == 'r' && command[1] == 's' && command[2] == 'c' && command[3] == 'h' && command[4] == ' ')
+#define IS_CANCEL_COMMAND (command[0] == 'c' && command[1] == 'n' && command[2] == 'c' && command[3] == ' ')
+#define IS_CONFIGURE_COMMAND (command[0] == 'c' && command[1] == 'f' && command[2] == 'g' && command[3] == ' ')
+#define IS_HELP_COMMAND (command[0] == 'h' && command[1] == 'e' && command[2] == 'l' && command[3] == 'p')
+
 
 int main(int argc, char *argv[]) {
 
@@ -32,7 +41,22 @@ int main(int argc, char *argv[]) {
             break;
         }
         c = command[0];
+        if (c != QUIT) {
+            if IS_VIEW_COMMAND {
+                printf("'View' command identified.\n");
+            } else if IS_SCHEDULE_COMMAND {
+                printf("'Schedule' command identified.\n");
+            } else if IS_RESCHEDULE_COMMAND {
+                printf("'Reschedule' command identified.\n");
+            } else if IS_CANCEL_COMMAND {
+                printf("'Cancel' command identified.\n");
+            } else if IS_CONFIGURE_COMMAND {
+                printf("'Configure' command identified.\n");
+            } else if IS_HELP_COMMAND {
+                printf("'Help' command identified.\n");
+            }
+        }
     } while (c != QUIT);
-    printf("Session terminated.\n");
+    printf("session terminated.\n");
     return 0;
 }
