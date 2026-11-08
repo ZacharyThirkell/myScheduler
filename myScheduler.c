@@ -11,14 +11,28 @@
 
 #define MAJOR 1
 #define MINOR 1
-#define PATCH 1
+#define PATCH 7
+
+#define MAX_COMMAND_LENGTH 100
+#define QUIT 113
 
 int main(int argc, char *argv[]) {
 
     if (argc < 2 || strcmp(argv[1], "run") != 0) {
-        printf("Usage: myScheduler run (runs the scheduler executable)");
+        printf("Usage: myScheduler run\n");
         return 1;
     }
-    printf("myScheduler v%d.%d.%d initialised.\n\n", MAJOR, MINOR, PATCH);
+    printf("myScheduler v%d.%d.%d initialised.\n", MAJOR, MINOR, PATCH);
+    char c;
+    char command[MAX_COMMAND_LENGTH];
+    do {
+        printf("myScheduler> ");
+        fflush(stdout);
+        if (!fgets(command, MAX_COMMAND_LENGTH, stdin)) {
+            break;
+        }
+        c = command[0];
+    } while (c != QUIT);
+    printf("Session terminated.\n");
     return 0;
 }
