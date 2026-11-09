@@ -2,7 +2,7 @@
  *  @author Zachary Thirkell
  *  @date 8/11/26
  *  @brief a simple scheduling app that runs in the microsoft terminal
- *  @version 1.2.3
+ *  @version 1.3.0
  *  PATH = C:\Users\zacha\dev\myScheduler
  *  datafile location: C:\Users\zacha\dev\myScheduler\schedule.txt
 */
@@ -11,8 +11,8 @@
 #include <string.h>
 
 #define MAJOR 1
-#define MINOR 2
-#define PATCH 3
+#define MINOR 3
+#define PATCH 0
 
 #define MAX_COMMAND_LENGTH 100
 #define MAX_TOKENS 5
@@ -26,6 +26,11 @@
 #define IS_HELP_COMMAND (command[0] == 'h' && command[1] == 'e' && command[2] == 'l' && command[3] == 'p')
 
 #define DATAFILE_ADDRESS "C:\\Users\\zacha\\dev\\myScheduler\\schedule.txt"
+
+#define MAX_LINES 100
+#define MAX_LINE_LENGTH 50
+#define NAME_WIDTH 30
+#define VIEW_LENGTH 59
 
 typedef enum {
     VW = 1,
@@ -48,6 +53,28 @@ void help() {
     printf("Get help                       help\n\n");
 }
 
+void view(char lines[MAX_LINES][MAX_LINE_LENGTH], int count) {
+    printf("\nName                           Reference Timestamp\n");
+    printf("--------------------------------------------------\n");
+    size_t i;
+    for (i = 0; i < count; i++) {
+        char display_string[VIEW_LENGTH];
+        char name[NAME_WIDTH + 1];
+        snprintf(name, sizeof name, "%s", lines[i] + 20);
+        name[strcspn(name, "\r\n")] = '\0';
+        snprintf(display_string, sizeof(display_string), "%-*s %.8s  %.2s:%.2s %.2s/%.2s %.4s\n",
+                NAME_WIDTH, name,
+                lines[i] + 12,
+                lines[i] + 8,
+                lines[i] + 10,
+                lines[i] + 6,
+                lines[i] + 4,
+                lines[i]);
+        printf("%s", display_string);
+    }
+    printf("\n");
+}
+
 int main(int argc, char *argv[]) {
 
     if (argc < 2 || strcmp(argv[1], "run") != 0) {
@@ -68,7 +95,6 @@ int main(int argc, char *argv[]) {
             Operation operation;
             if IS_VIEW_COMMAND {
                 operation = VW;
-                printf("'View' command identified.\n");
             } else if IS_SCHEDULE_COMMAND {
                 operation = SCH;
                 printf("'Schedule' command identified.\n");
@@ -91,8 +117,16 @@ int main(int argc, char *argv[]) {
             } if (operation == ERROR) {
                 printf("ERROR: Operation not recognised\n");
             } else {
-                FILE* datafile = fopen(DATAFILE_ADDRESS, "r+");
+                FILE* datafile = fopen(DATAFILE_ADDRESS, "r");
+                char lines[MAX_LINES][MAX_LINE_LENGTH];
+                int count = 0;
+                while (count < MAX_LINES && fgets(lines[count], MAX_LINE_LENGTH, datafile)) {
+                    count++;
+                }
                 fclose(datafile);
+                if (operation == VW) {
+                    view(lines, count);
+                }
             }
         }
     } while (c != QUIT);
